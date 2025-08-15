@@ -1,0 +1,52 @@
+version: 0.0.1
+type: plugin
+author: thclouds
+name: taidesk
+label:
+  en_US: taidesk
+  ja_JP: taidesk
+  zh_Hans: taidesk
+  pt_BR: taidesk
+description:
+  en_US: link taidesk
+  ja_JP: link taidesk
+  zh_Hans: link taidesk
+  pt_BR: link taidesk
+icon: icon.svg
+icon_dark: icon-dark.svg
+resource:
+  memory: 268435456
+  permission:
+    tool:
+      enabled: true
+    model:
+      enabled: true
+      llm: true
+      text_embedding: true
+      rerank: true
+      tts: true
+      speech2text: true
+      moderation: true
+    endpoint:
+      enabled: true
+    app:
+      enabled: true
+    storage:
+      enabled: true
+      size: 1048576
+plugins:
+  endpoints:
+    - group/taidesk.yaml
+meta:
+  version: 0.0.1
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: python
+    version: "3.12"
+    entrypoint: main
+  minimum_dify_version: 1.7.1
+created_at: 2025-08-12T08:57:05.0398388+08:00
+privacy: PRIVACY.md
+verified: false

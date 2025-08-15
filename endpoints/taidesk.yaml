@@ -1,0 +1,5 @@
+path: "/taidesk"
+method: "POST"
+extra:
+  python:
+    source: "endpoints/taidesk.py"
