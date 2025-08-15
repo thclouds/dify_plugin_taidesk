@@ -12,8 +12,8 @@ description:
   ja_JP: link taidesk
   zh_Hans: link taidesk
   pt_BR: link taidesk
-icon: icon.svg
-icon_dark: icon-dark.svg
+icon: icon.png
+icon_dark: icon.png
 resource:
   memory: 268435456
   permission:
