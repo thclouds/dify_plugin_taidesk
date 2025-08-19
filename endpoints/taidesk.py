@@ -6,6 +6,7 @@ from dify_plugin import Endpoint
 from .database_config import DatabaseConfig
 from .db_engine import db, init_db
 from .account_management import AccountManagementService
+from .model_management import ModelManagementService
 from flask import Flask
 
 
@@ -178,6 +179,31 @@ class TaideskEndpoint(Endpoint):
                     )
                 except Exception as e:
                     print(f"get异常: {str(e)}")
+                    return Response(
+                        response=json.dumps({"error": str(e)}),
+                        status=500,
+                        content_type="application/json"
+                    )
+            elif operation_type == "models":
+                # 同步模型
+                try:
+                    models_data = data.get("data", [])
+                     
+                    with app.app_context():
+                        results = ModelManagementService.sync_models(models_data)
+                     
+                    return Response(
+                        response=json.dumps({
+                            "status": "success",
+                            "sync_count": len(models_data),
+                            "results": results
+                        }),
+                        status=200,
+                        content_type="application/json"
+                    )
+                except Exception as e:
+                    print(f"同步模型异常: {str(e)}")
+                    print(f"异常堆栈:{traceback.format_exc()}")
                     return Response(
                         response=json.dumps({"error": str(e)}),
                         status=500,
