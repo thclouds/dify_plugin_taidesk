@@ -1,6 +1,6 @@
 settings:
   - name: api_key
-    type: secret-input
+    type: text-input
     required: true
     label:
       en_US: API Key

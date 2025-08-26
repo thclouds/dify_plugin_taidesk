@@ -3,7 +3,7 @@ import secrets
 import base64
 import json
 from datetime import datetime
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Mapping
 
 from sqlalchemy import func
 import logging
@@ -55,13 +55,14 @@ class ProviderModelSetting(db.Model):
 # 服务类实现
 class ModelManagementService:
     @staticmethod
-    def sync_models(models_data):
+    def sync_models(models_data, settings: Mapping):
         """
         同步模型数据
         :param models_data: 模型数据列表
         :return: 同步结果
         """
         results = []
+        api_key = settings.get("api_key")
         try:
             # 开始事务
             db.session.begin()
@@ -101,7 +102,9 @@ class ModelManagementService:
                     encrypted_config = json.dumps({
                         "display_name": name,
                         "endpoint_model_name": provider_model_name,
-                        "base_url": "https://www.taidesk.com",
+                        "api_key": api_key,
+                        "endpoint_url": "https://www.taidesk.com/compatible-mode/v1",
+                        "mode": "chat",
                         "vision_support": str(vision).lower(),
                         "function_call_support": str(functioncall).lower()
                     })

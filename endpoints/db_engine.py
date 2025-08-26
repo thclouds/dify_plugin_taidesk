@@ -20,7 +20,10 @@ def init_db(app):
     config = DatabaseConfig()
     
     # Set database configuration from DatabaseConfig
-    app.config['SQLALCHEMY_DATABASE_URI'] = config.SQLALCHEMY_DATABASE_URI
+    database_uri = config.SQLALCHEMY_DATABASE_URI
+    if '_plugin' in database_uri:
+        database_uri = database_uri.replace('_plugin', '')
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
     app.config['SQLALCHEMY_POOL_SIZE'] = config.SQLALCHEMY_POOL_SIZE
     app.config['SQLALCHEMY_MAX_OVERFLOW'] = config.SQLALCHEMY_MAX_OVERFLOW
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

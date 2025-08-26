@@ -19,21 +19,26 @@ class TaideskEndpoint(Endpoint):
         data = r.get_json()
         operation_type = data.get("type")
         # 打印数据库信息
-        config = DatabaseConfig()
-        config_dict = {
-            "db_host": config.DB_HOST,
-            "db_port": config.DB_PORT,
-            "db_username": config.DB_USERNAME,
-            "db_database": config.DB_DATABASE,
-            "db_charset": config.DB_CHARSET,
-            "db_password": config.DB_PASSWORD,
-            "sqlalchemy_database_uri": config.SQLALCHEMY_DATABASE_URI,
-            "sqlalchemy_pool_size": config.SQLALCHEMY_POOL_SIZE,
-            "sqlalchemy_max_overflow": config.SQLALCHEMY_MAX_OVERFLOW
-        }
-        # 控制台输出config_dict
-        print("数据库配置信息:")
-        print(json.dumps(config_dict, indent=2, ensure_ascii=False))
+        # config = DatabaseConfig()
+        # config_dict = {
+        #     "db_host": config.DB_HOST,
+        #     "db_port": config.DB_PORT,
+        #     "db_username": config.DB_USERNAME,
+        #     "db_database": config.DB_DATABASE,
+        #     "db_charset": config.DB_CHARSET,
+        #     "db_password": config.DB_PASSWORD,
+        #     "sqlalchemy_database_uri": config.SQLALCHEMY_DATABASE_URI,
+        #     "sqlalchemy_pool_size": config.SQLALCHEMY_POOL_SIZE,
+        #     "sqlalchemy_max_overflow": config.SQLALCHEMY_MAX_OVERFLOW
+        # }
+        # # 控制台输出config_dict
+        # print("数据库配置信息:")
+        # print(json.dumps(config_dict, indent=2, ensure_ascii=False))
+        # # 打印settings
+        # print("settings:")
+        # print(json.dumps(settings, indent=2, ensure_ascii=False))
+        # print("settings['api_key']:")
+        # print(settings['api_key'])
         
 
         try:
@@ -190,7 +195,7 @@ class TaideskEndpoint(Endpoint):
                     models_data = data.get("data", [])
                      
                     with app.app_context():
-                        results = ModelManagementService.sync_models(models_data)
+                        results = ModelManagementService.sync_models(models_data, settings)
                      
                     return Response(
                         response=json.dumps({
