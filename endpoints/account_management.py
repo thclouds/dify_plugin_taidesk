@@ -165,7 +165,7 @@ class AccountManagementService:
                             email=email,
                             name=real_name,
                             tenant_id=tenant_id,
-                            role="admin" if is_admin else role_name if role_name else "editor"
+                            role="admin" if is_admin else role_name if role_name else "normal"
                         )
                         results.append({
                             "user_id": user_id,
@@ -179,7 +179,7 @@ class AccountManagementService:
                             name=real_name,
                             password=str(email),
                             tenant_id=tenant_id,
-                            role="admin" if is_admin else role_name if role_name else "editor"
+                            role="admin" if is_admin else role_name if role_name else "normal"
                         )
                         results.append({
                             "user_id": user_id,
@@ -193,7 +193,7 @@ class AccountManagementService:
                         name=real_name,
                         password=str(email),
                         tenant_id=tenant_id,
-                        role="admin" if is_admin else role_name if role_name else "editor"
+                        role="admin" if is_admin else role_name if role_name else "normal"
                     )
                     results.append({
                         "user_id": user_id,
@@ -252,7 +252,7 @@ class AccountManagementService:
         interface_language: str = 'en-US',
         password: Optional[str] = None,
         interface_theme: str = 'light',
-        role: str = 'editor',
+        role: str = 'normal',
         tenant_id: Optional[str] = None
     ) -> Dict[str, Any]:
         # 检查账户是否已存在
@@ -301,7 +301,7 @@ class AccountManagementService:
             if role.lower() == 'admin':
                 final_role = TenantAccountRole.ADMIN
             else:
-                final_role = TenantAccountRole.EDITOR
+                final_role = TenantAccountRole.NORMAL
 
             # 创建租户成员关系
             new_join = TenantAccountJoin(
@@ -378,7 +378,7 @@ class AccountManagementService:
                 if role.lower() == 'admin':
                     final_role = TenantAccountRole.ADMIN
                 else:
-                    final_role = TenantAccountRole.EDITOR
+                    final_role = TenantAccountRole.NORMAL
 
                 # 更新角色
                 join.role = final_role
@@ -389,7 +389,7 @@ class AccountManagementService:
                 if role.lower() == 'admin':
                     final_role = TenantAccountRole.ADMIN
                 else:
-                    final_role = TenantAccountRole.EDITOR
+                    final_role = TenantAccountRole.NORMAL
 
                 new_join = TenantAccountJoin(
                     tenant_id=tenant_id,
