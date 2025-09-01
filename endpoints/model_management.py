@@ -141,11 +141,15 @@ class ModelManagementService:
             
             if existing_model_dict:
                 models_to_delete = list(existing_model_dict.values())
-                credential_ids_to_delete = [model.credential_id for model in models_to_delete if model.credential_id]
-                if credential_ids_to_delete:
-                    credentials_to_delete = ProviderModelCredential.query.filter(
-                        ProviderModelCredential.id.in_(credential_ids_to_delete)
+                
+                # 通过查询数据库收集需要删除的credential
+                for model in models_to_delete:
+                    model_credentials = ProviderModelCredential.query.filter_by(
+                        tenant_id=model.tenant_id,
+                        provider_name=model.provider_name,
+                        model_name=model.model_name
                     ).all()
+                    credentials_to_delete.extend(model_credentials)
                 
                 # 批量删除收集到的模型和凭证
                 for credential in credentials_to_delete:
