@@ -98,6 +98,7 @@ class ModelManagementService:
                         model_type = "text-embedding"
                     elif rerank:
                         model_type = "rerank"
+                    though_support = "supported" if reasoning else "not_supported"
                     
                     encrypted_config = json.dumps({
                         "display_name": name,
@@ -105,6 +106,7 @@ class ModelManagementService:
                         "api_key": api_key,
                         "endpoint_url": "https://www.taidesk.com/compatible-mode/v1",
                         "mode": "chat",
+                        "agent_though_support": though_support,
                         "vision_support": str(vision).lower(),
                         "function_call_support": str(functioncall).lower()
                     })
