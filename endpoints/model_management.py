@@ -62,7 +62,8 @@ class ModelManagementService:
             if not first_tenant:
                 raise TenantNotFoundError("dify还没初始化workspace")
             tenant_id = first_tenant.id
-            provider_name = f"{tenant_id}/taimodel/taimodel"
+            # provider_name = f"{tenant_id}/taimodel/taimodel"
+            provider_name = "thclouds/taimodel/taimodel"
             
             # 查询数据库中该提供商的所有模型
             existing_models = ProviderModel.query.filter_by(

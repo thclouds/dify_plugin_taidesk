@@ -3,15 +3,11 @@ type: plugin
 author: thclouds
 name: taidesk
 label:
-  en_US: taidesk
-  ja_JP: taidesk
-  zh_Hans: taidesk
-  pt_BR: taidesk
+  en_US: TAIDESK
+  zh_Hans: TAIDESK
 description:
-  en_US: link taidesk
-  ja_JP: link taidesk
-  zh_Hans: link taidesk
-  pt_BR: link taidesk
+  en_US: TAIDESK集成（单点登录、模型同步）
+  zh_Hans: TAIDESK集成（单点登录、模型同步）
 icon: icon.png
 icon_dark: icon.png
 resource:
