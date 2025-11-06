@@ -194,9 +194,14 @@ class TaideskEndpoint(Endpoint):
                 # 同步模型
                 try:
                     models_data = data.get("data", [])
+                    client_id = data.get("client_id")
+                    api_settings = {
+                        "api_key": data.get("key"),
+                        "endpoint": data.get("base_url")+"/compatible-mode/v1"
+                    }
                      
                     with app.app_context():
-                        results = ModelManagementService.sync_models(models_data, settings)
+                        results = ModelManagementService.sync_models(client_id, models_data, api_settings, settings)
                      
                     return Response(
                         response=json.dumps({

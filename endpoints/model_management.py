@@ -50,7 +50,7 @@ class ProviderModelCredential(db.Model):
 # 服务类实现
 class ModelManagementService:
     @staticmethod
-    def sync_models(models_data, settings: Mapping):
+    def sync_models(client_id: str, models_data, api_settings: Dict[str, Any], settings: Mapping):
         """
         同步模型数据
         """
@@ -105,7 +105,7 @@ class ModelManagementService:
                         "display_name": name,
                         "endpoint_model_name": provider_model_name,
                         "api_key": api_key,
-                        "endpoint_url": "https://www.taidesk.com/compatible-mode/v1",
+                        "endpoint_url": api_settings.get("endpoint"),
                         "mode": "chat",
                         "agent_though_support": though_support,
                         "vision_support": str(vision).lower(),
