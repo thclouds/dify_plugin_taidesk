@@ -7,6 +7,7 @@ from .database_config import DatabaseConfig
 from .db_engine import db, init_db
 from .account_management import AccountManagementService
 from .model_management import ModelManagementService
+from .space.external_knowledge_management import ExternalKnowledgeManagementService
 from flask import Flask
 
 
@@ -208,6 +209,36 @@ class TaideskEndpoint(Endpoint):
                     )
                 except Exception as e:
                     print(f"同步模型异常: {str(e)}")
+                    print(f"异常堆栈:{traceback.format_exc()}")
+                    return Response(
+                        response=json.dumps({"error": str(e)}),
+                        status=500,
+                        content_type="application/json"
+                    )
+            elif operation_type == "space":
+                # 同步外部知识库
+                try:
+                    knowledge_data = data.get("data", [])
+                    client_id = data.get("client_id")
+                    api_settings = {
+                        "api_key": data.get("key"),
+                        "endpoint": data.get("base_url")+"/api/app-doc/api"
+                    }
+
+                    with app.app_context():
+                        results = ExternalKnowledgeManagementService.sync_external_knowledge(client_id, knowledge_data, api_settings, settings)
+                    
+                    return Response(
+                        response=json.dumps({
+                            "status": "success",
+                            "sync_count": len(knowledge_data),
+                            "results": results
+                        }),
+                        status=200,
+                        content_type="application/json"
+                    )
+                except Exception as e:
+                    print(f"同步外部知识库异常: {str(e)}")
                     print(f"异常堆栈:{traceback.format_exc()}")
                     return Response(
                         response=json.dumps({"error": str(e)}),

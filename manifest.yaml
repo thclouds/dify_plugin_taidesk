@@ -1,4 +1,4 @@
-version: 0.0.1
+version: 0.0.2
 type: plugin
 author: thclouds
 name: taidesk
@@ -6,8 +6,8 @@ label:
   en_US: TAIDESK
   zh_Hans: TAIDESK
 description:
-  en_US: TAIDESK集成（单点登录、模型同步）
-  zh_Hans: TAIDESK集成（单点登录、模型同步）
+  en_US: TAIDESK集成（单点登录、模型同步、知识库同步）
+  zh_Hans: TAIDESK集成（单点登录、模型同步、知识库同步）
 icon: icon.png
 icon_dark: icon.png
 resource:
@@ -34,7 +34,7 @@ plugins:
   endpoints:
     - group/taidesk.yaml
 meta:
-  version: 0.0.1
+  version: 0.0.2
   arch:
     - amd64
     - arm64
