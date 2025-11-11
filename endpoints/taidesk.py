@@ -235,7 +235,7 @@ class TaideskEndpoint(Endpoint):
                     client_id = data.get("client_id")
                     api_settings = {
                         "api_key": data.get("key"),
-                        "endpoint": data.get("base_url")+"/api/app-doc/api"
+                        "endpoint": data.get("base_url")+"/api/app-doc/v2/api"
                     }
 
                     with app.app_context():
