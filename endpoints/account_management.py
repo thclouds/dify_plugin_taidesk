@@ -143,7 +143,7 @@ class AccountManagementService:
                 # 使用id作为唯一标识
                 user_id = str(user_data.get("id"))
                 real_name = user_data.get("realName")
-                phone = user_data.get("phone")
+                # phone = user_data.get("phone")
                 # 从数据库查询第一个租户id
                 first_tenant = Tenant.query.first()
                 if not first_tenant:
@@ -153,7 +153,7 @@ class AccountManagementService:
                 role_name = user_data.get("roleName")
                 
                 # 这里我们假设使用phone或id生成email
-                email = f"{phone}@taidesk.com" if phone else f"u_{user_id}@taidesk.com"
+                email = f"u_{user_id}@taidesk.com"
                 
                 try:
                     # 检查用户是否存在
