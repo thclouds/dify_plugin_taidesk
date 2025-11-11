@@ -9,7 +9,7 @@ import logging
 from dify_plugin.config.logger_format import plugin_logger_handler
 
 from ..db_engine import db
-from ..account_management import Tenant, TenantNotFoundError
+from ..account_management import Tenant, TenantNotFoundError, AccountManagementService
 
 # 使用自定义处理器设置日志
 logger = logging.getLogger(__name__)
@@ -201,6 +201,94 @@ class ExternalKnowledgeManagementService:
         except Exception as e:
             db.session.rollback()
             logger.error(f"同步外部知识库时出错: {str(e)}")
+            raise e
+        finally:
+            if db.session.is_active:
+                db.session.close()
+        
+        return results
+    
+    @staticmethod
+    def sync_external_knowledge_user(client_id, user_data, api_settings, settings):
+        """
+        同步外部知识库用户数据，批量处理具有相同space_id的用户
+        输入数据字段: id、space_id等
+        """
+        results = []
+        try:
+            # 获取租户信息
+            first_tenant = Tenant.query.first()
+            if not first_tenant:
+                raise TenantNotFoundError("dify还没初始化workspace")
+            tenant_id = first_tenant.id
+            
+            # 1. 查询数据库中该租户的taidesk外部知识库API
+            existing_api = ExternalKnowledgeApis.query.filter_by(
+                tenant_id=tenant_id, name=f"taidesk_api_{client_id}"
+            ).first()
+            
+            if not existing_api:
+                # 如果查询不到taidesk类型的外部知识库API，不需要继续处理
+                db.session.close()
+                return results
+            
+            # 获取API ID用于后续查询
+            api_id = existing_api.id
+            
+            # 按space_id分组用户数据
+            space_users_map = {}
+            for user_item in user_data:
+                space_id = str(user_item.get("space_id"))
+                if space_id not in space_users_map:
+                    space_users_map[space_id] = []
+                space_users_map[space_id].append(user_item)
+            
+            # 处理每个space_id的用户组
+            for space_id, users in space_users_map.items():
+                # 直接使用space_id从ExternalKnowledgeBindings查询dataset_id
+                binding = ExternalKnowledgeBindings.query.filter_by(
+                    external_knowledge_api_id=api_id,
+                    external_knowledge_id=space_id
+                ).first()
+                
+                if binding:
+                    dataset_id = binding.dataset_id
+                    
+                    # 根据space_id删除现有的数据集权限记录
+                    DatasetPermission.query.filter_by(
+                        dataset_id=dataset_id,
+                        tenant_id=tenant_id
+                    ).delete()
+                    
+                    # 为每个用户创建新的数据集权限记录
+                    for user_item in users:
+                        user_id = str(user_item.get("user_id"))
+                        
+                        # 使用user_id生成email，然后查询用户表获取account_id
+                        email = f"u_{user_id}@taidesk.com"
+                        account = AccountManagementService.get_account_by_email(email)
+                        if account:
+                            account_id = account.id
+                            
+                            # 插入新的数据集权限记录
+                            new_permission = DatasetPermission(
+                                id=str(uuid.uuid4()),
+                                dataset_id=dataset_id,
+                                account_id=account_id,
+                                tenant_id=tenant_id,
+                                has_permission=True
+                            )
+                            db.session.add(new_permission)
+                            results.append({"user_id": user_id, "status": "updated"})
+                        else:
+                            # 如果找不到用户，跳过该用户不处理
+                            results.append({"user_id": user_id, "status": "skipped"})
+                            continue
+            
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"同步外部知识库用户权限时出错: {str(e)}")
             raise e
         finally:
             if db.session.is_active:

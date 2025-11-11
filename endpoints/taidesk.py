@@ -250,6 +250,36 @@ class TaideskEndpoint(Endpoint):
                         status=500,
                         content_type="application/json"
                     )
+            elif operation_type == "space_user":
+                # 同步外部知识库
+                try:
+                    user_data = data.get("data", [])
+                    client_id = data.get("client_id")
+                    api_settings = {
+                        "api_key": data.get("key"),
+                        "endpoint": data.get("base_url")+"/api/app-doc/api"
+                    }
+
+                    with app.app_context():
+                        results = ExternalKnowledgeManagementService.sync_external_knowledge_user(client_id, user_data, api_settings, settings)
+                    
+                    return Response(
+                        response=json.dumps({
+                            "status": "success",
+                            "sync_count": len(user_data),
+                            "results": results
+                        }),
+                        status=200,
+                        content_type="application/json"
+                    )
+                except Exception as e:
+                    print(f"同步外部知识库用户异常: {str(e)}")
+                    print(f"异常堆栈:{traceback.format_exc()}")
+                    return Response(
+                        response=json.dumps({"error": str(e)}),
+                        status=500,
+                        content_type="application/json"
+                    )
             else:
                 return Response(
                     response=json.dumps({"error": f"Unsupported operation type: {operation_type}"}),
