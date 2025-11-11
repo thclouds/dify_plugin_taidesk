@@ -5,7 +5,7 @@ from werkzeug import Request, Response
 from dify_plugin import Endpoint
 from .database_config import DatabaseConfig
 from .db_engine import db, init_db
-from .account_management import AccountManagementService
+from .account_management import AccountManagementService, AccountNotFoundError
 from .model_management import ModelManagementService
 from .space.external_knowledge_management import ExternalKnowledgeManagementService
 from flask import Flask
@@ -99,70 +99,75 @@ class TaideskEndpoint(Endpoint):
                         status=500,
                         content_type="application/json"
                     )
-            elif operation_type == "account_create":
-                # 创建账户
-                try:
-                    result = AccountManagementService.create_account(
-                        email=data['email'],
-                        name=data['name'],
-                        interface_language=data.get('interface_language', 'en-US'),
-                        password=data.get('password'),
-                        interface_theme=data.get('interface_theme', 'light'),
-                        role=data.get('role', 'editor'),
-                        tenant_id=data.get('tenant_id')
-                    )
-                    return Response(
-                        response=json.dumps({"status": "success", "data": result}),
-                        status=201,
-                        content_type="application/json"
-                    )
-                except Exception as e:
-                    print(f"创建账户异常: {str(e)}")
-                    return Response(
-                        response=json.dumps({"error": str(e)}),
-                        status=400,
-                        content_type="application/json"
-                    )
-            elif operation_type == "account_update":
-                # 更新账户
-                try:
-                    email = data['email']
-                    name = data.get('name')
-                    new_email = data.get('new_email')
-                    interface_language = data.get('interface_language')
-                    interface_theme = data.get('interface_theme')
-                    role = data.get('role')
-                    tenant_id = data.get('tenant_id')
+            # elif operation_type == "account_create":
+            #     # 创建账户
+            #     try:
+            #         result = AccountManagementService.create_account(
+            #             email=data['email'],
+            #             name=data['name'],
+            #             interface_language=data.get('interface_language', 'en-US'),
+            #             password=data.get('password'),
+            #             interface_theme=data.get('interface_theme', 'light'),
+            #             role=data.get('role', 'editor'),
+            #             tenant_id=data.get('tenant_id')
+            #         )
+            #         return Response(
+            #             response=json.dumps({"status": "success", "data": result}),
+            #             status=201,
+            #             content_type="application/json"
+            #         )
+            #     except Exception as e:
+            #         print(f"创建账户异常: {str(e)}")
+            #         return Response(
+            #             response=json.dumps({"error": str(e)}),
+            #             status=400,
+            #             content_type="application/json"
+            #         )
+            # elif operation_type == "account_update":
+            #     # 更新账户
+            #     try:
+            #         email = data['email']
+            #         name = data.get('name')
+            #         new_email = data.get('new_email')
+            #         interface_language = data.get('interface_language')
+            #         interface_theme = data.get('interface_theme')
+            #         role = data.get('role')
+            #         tenant_id = data.get('tenant_id')
                     
-                    result = AccountManagementService.update_account(
-                        email=email,
-                        name=name,
-                        new_email=new_email,
-                        interface_language=interface_language,
-                        interface_theme=interface_theme,
-                        role=role,
-                        tenant_id=tenant_id
-                    )
-                    return Response(
-                        response=json.dumps({"status": "success", "data": result}),
-                        status=200,
-                        content_type="application/json"
-                    )
-                except Exception as e:
-                    print(f"更新账户异常: {str(e)}")
-                    return Response(
-                        response=json.dumps({"error": str(e)}),
-                        status=400,
-                        content_type="application/json"
-                    )
+            #         result = AccountManagementService.update_account(
+            #             email=email,
+            #             name=name,
+            #             new_email=new_email,
+            #             interface_language=interface_language,
+            #             interface_theme=interface_theme,
+            #             role=role,
+            #             tenant_id=tenant_id
+            #         )
+            #         return Response(
+            #             response=json.dumps({"status": "success", "data": result}),
+            #             status=200,
+            #             content_type="application/json"
+            #         )
+            #     except Exception as e:
+            #         print(f"更新账户异常: {str(e)}")
+            #         return Response(
+            #             response=json.dumps({"error": str(e)}),
+            #             status=400,
+            #             content_type="application/json"
+            #         )
             elif operation_type == "account_delete":
                 # 删除账户
                 try:
                     user_id_list = data.get("data", [])
-                    # 循环删除用户
-                    for user_id in user_id_list:
-                        email = f"u_{user_id}@taidesk.com"
-                        result = AccountManagementService.delete_account(email)
+                    with app.app_context():
+                        # 循环删除用户
+                        for user_id in user_id_list:
+                            email = f"u_{user_id}@taidesk.com"
+                            try:
+                                result = AccountManagementService.delete_account(email)
+                            except AccountNotFoundError:
+                                # 用户不存在，跳过
+                                continue
                     return Response(
                         response=json.dumps({"status": "success", "data": {"deleted_users": user_id_list}}),
                         status=200,
