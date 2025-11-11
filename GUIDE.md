@@ -60,7 +60,7 @@ Now you can edit the `manifest.yaml` file to describe your Plugin, here is the b
     - Not allowed to extend both models and endpoints
     - Currently only supports up to one supplier of each type of extension
 - meta(object)
-  - version(version, required)：manifest format version, initial version 0.0.1
+  - version(version, required)：manifest format version, initial version 0.0.2
   - arch(list[string], required)：Supported architectures, currently only supports amd64 arm64
   - runner(object, required)：Runtime configuration
     - language(string)：Currently only supports python

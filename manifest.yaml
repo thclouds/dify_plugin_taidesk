@@ -6,8 +6,8 @@ label:
   en_US: TAIDESK
   zh_Hans: TAIDESK
 description:
-  en_US: TAIDESK集成（单点登录、模型同步、知识库同步）
-  zh_Hans: TAIDESK集成（单点登录、模型同步、知识库同步）
+  en_US: TAIDESK集成（单点登录、用户同步、模型同步、知识库同步）
+  zh_Hans: TAIDESK集成（单点登录、用户同步、模型同步、知识库同步）
 icon: icon.png
 icon_dark: icon.png
 resource:
