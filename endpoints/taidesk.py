@@ -158,10 +158,13 @@ class TaideskEndpoint(Endpoint):
             elif operation_type == "account_delete":
                 # 删除账户
                 try:
-                    email = data['email']
-                    result = AccountManagementService.delete_account(email)
+                    user_id_list = data.get("data", [])
+                    # 循环删除用户
+                    for user_id in user_id_list:
+                        email = f"u_{user_id}@taidesk.com"
+                        result = AccountManagementService.delete_account(email)
                     return Response(
-                        response=json.dumps({"status": "success", "data": result}),
+                        response=json.dumps({"status": "success", "data": {"deleted_users": user_id_list}}),
                         status=200,
                         content_type="application/json"
                     )

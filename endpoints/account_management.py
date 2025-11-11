@@ -138,17 +138,17 @@ class AccountManagementService:
         try:
             # 开始事务
             db.session.begin()
+            # 从数据库查询第一个租户id
+            first_tenant = Tenant.query.first()
+            if not first_tenant:
+                raise TenantNotFoundError("数据库中未找到租户信息")
+            tenant_id = first_tenant.id
             
             for user_data in sync_data:
                 # 使用id作为唯一标识
                 user_id = str(user_data.get("id"))
                 real_name = user_data.get("realName")
                 # phone = user_data.get("phone")
-                # 从数据库查询第一个租户id
-                first_tenant = Tenant.query.first()
-                if not first_tenant:
-                    raise TenantNotFoundError("数据库中未找到租户信息")
-                tenant_id = first_tenant.id
                 is_admin = user_data.get("admin", False)
                 role_name = user_data.get("roleName")
                 
