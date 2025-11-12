@@ -84,6 +84,7 @@ class ExternalKnowledgeManagementService:
                 existing_api = ExternalKnowledgeApis(
                     id=str(uuid.uuid4()),
                     name=f"taidesk_api_{client_id}",
+                    description="",
                     tenant_id=tenant_id,
                     settings=json.dumps(api_settings),
                     created_by=tenant_id
